@@ -7,6 +7,7 @@ const contactRoutes = require("./routes/contactRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const photoRoutes = require("./routes/photoRoutes");
 const path = require("path"); // ✅ ADD THIS
+const db = require("./config/db");
 
 dotenv.config();
 const app = express();
@@ -26,8 +27,15 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", message: "Server is running." });
+app.get("/health", async (req, res) => {
+  try {
+    await db.query("SELECT 1");
+    res
+      .status(200)
+      .json({ status: "OK", message: "DB connected,Server is running." });
+  } catch (error) {
+    res.status(500).json({ status: "DB error" });
+  }
 });
 
 // require("dotenv").config();
